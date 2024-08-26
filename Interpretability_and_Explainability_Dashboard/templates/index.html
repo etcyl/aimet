@@ -41,6 +41,14 @@
         font-size: 1.3rem;
         margin-bottom: 10px;
       }
+      .similarity-metrics {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #e9f7fd;
+        border: 1px solid #b3d7e9;
+        border-radius: 5px;
+        text-align: left;
+      }
     </style>
   </head>
   <body>
@@ -72,7 +80,6 @@
                 <option value="gpt-3.5-turbo">ChatGPT (GPT-3.5)</option>
                 <option value="gpt-4">ChatGPT (GPT-4)</option>
                 <option value="text-davinci-003">Davinci (GPT-3)</option>
-                <!-- Add more options as needed -->
               </select>
             </div>
             <div class="form-group">
@@ -82,7 +89,6 @@
                 <option value="ResNet34">ResNet34</option>
                 <option value="VGG16">VGG16</option>
                 <option value="DenseNet121">DenseNet121</option>
-                <!-- Add more options as needed -->
               </select>
             </div>
             <button type="submit" class="btn btn-primary btn-block mt-4">Upload and Process</button>
@@ -121,6 +127,16 @@
           </div>
           <div class="alert alert-info explainability-output" role="alert">
             {{ explainability_output }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="similarity-metrics">
+            <h5>Similarity Analysis</h5>
+            <p><strong>Structural Similarity Index (SSIM):</strong> {{ similarity_score }}</p>
+            <p><strong>Pixel Difference:</strong> {{ pixel_difference }}</p>
           </div>
         </div>
       </div>
