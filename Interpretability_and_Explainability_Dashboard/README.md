@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="example_images/example3_Screenshot 2024-08-26 013110.png" alt="Visualization and explainability dashboard." width="400" />
+  <img src="example_images/example4_Screenshot 2024-08-26 123743.png" alt="Visualization and explainability dashboard." width="400" />
 </p>
 
 # Model Interpretability and Explainability Dashboard
