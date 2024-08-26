@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="example_images/example1_Screenshot 2024-08-26 124108.png" alt="Visualization and explainability dashboard." width="400" />
+</p>
+
 # LLM AIMET Strategy For Quantization-Aware Training in PyTorch and TensorFlow
 
 This project demonstrates a Flask-based web dashboard that integrates PyTorch and TensorFlow models for LLM guidance on AIMET (AI Model Efficiency Toolkit) quantization-aware training. The dashboard allows users to select models, view detailed layer-by-layer analysis, and get dynamic optimization suggestions using OpenAI's ChatGPT API.
