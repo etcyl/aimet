@@ -1,0 +1,6 @@
+flask
+flask-socketio
+openai==0.28
+torch
+torchvision
+tensorflow
