@@ -141,6 +141,9 @@ def get_chatgpt_suggestions(framework, model_name, model_parameters):
     with open(temp_filepath, "r") as temp_file:
         pretty_output = temp_file.read()
 
+    # Delete the temporary file after reading its content
+    os.remove(temp_filepath)
+
     return pretty_output
 
 @app.route('/')
