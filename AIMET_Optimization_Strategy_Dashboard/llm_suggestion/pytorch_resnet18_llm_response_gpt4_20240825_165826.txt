@@ -1,0 +1,44 @@
+Step Guide to Optimize ResNet18 Model using AIMET:
+
+1. **Define the Model**: Start by defining ResNet18 model using PyTorch. Ensure you have pre-trained the model over your target dataset and the model is ready for further optimization.
+
+2. **Import AIMET**: Import AIMET and other required modules in your Python environment.
+```python
+# Import necessary packages
+import torch
+import torchvision.models as models
+from aimet_torch.quantsim import QuantizationSimModel
+from aimet_torch import quantizer
+```
+3. **Choosing Relevant AIMET Features**:
+
+   - **Layer Sensitivity Analysis**: This is a powerful tool in recognizing which layers in the model are sensitive to quantization. You can use this feature to figure out which layers can be quantized without significant loss in accuracy.
+   
+   - **Quantization-Aware Training (QAT)**: Quantization can introduce some level of degradation in model performance. Hence, use AIMET's QAT, which modifies the model to mimic effects of quantization during the training process itself to maintain high accuracy.
+   
+   - **Cross-Layer Equalization**: If your model presents batch-normalization layers or any other scale-based layers, Cross-Layer Equalization can be a beneficial technique to optimize these layers improving model's robustness to quantization.
+
+4. **Select Between Per-Channel or Per-Tensor Quantization**:
+   ResNet18 has convolutional layers where per-channel quantization is more effective due to distinct distribution of input data across channels. However, if computational resources are a concern, per-tensor quantization which is less compute-intensive can be employed. Based on the precision-performance trade-off, you can decide which one to use.
+
+5. **Implementing Quantization in AIMET**: 
+
+   - **Define Quantization Scheme**:
+```python
+# choose per-channel or per-tensor quantization
+quant_scheme = quantizer.QuantScheme.per_channel_symmetric
+```
+- **Convert Model To Quantization Simulation Model**:
+```python
+# convert your model to quantization simulation model for AIMET
+qsim = QuantizationSimModel(resnet18, quant_scheme, dummy_input=torch.randn(1, 3, 224, 224))
+```
+6. **Apply Compression Techniques**:
+
+   AIMET supports two primary model compression techniques: **Quantization** and **Pruning**. If computation resources and latency are problematic, it might be wise to prune your model before quantization. This will remove the weights with small magnitudes first and adjust the model to keep high accuracy.
+   
+7. **Model Fine-tuning and Re-training**: It is advisable to re-train the ResNet18 model after optimization as it will help in adjusting the weight values that are drastically changed due to pruning or quantization.
+
+8. **Evaluate Model**: Finally evaluate your model's performance on your validation set, make sure the final accuracy is acceptable given the traded off computation costs.
+
+**Note**: Different portion of a model requires different AIMET features, the balance between optimization and model's accuracy should be maintained while applying these techniques. Always compare the optimized model's performance with the original model to ensure the model is improved as expected.

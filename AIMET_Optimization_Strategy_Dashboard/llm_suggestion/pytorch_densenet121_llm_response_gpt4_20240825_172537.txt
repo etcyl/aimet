@@ -1,0 +1,68 @@
+### Model: densenet121 (PYTORCH)
+### Generated: 20240825_172525
+
+Step Guide for Optimizing Densenet121 Model using AIMET:
+
+0. Import Required Libraries:
+
+You need PyTorch and AIMET libraries installed in your environment. You can install them via pip.
+```python
+import torch
+from aimet_torch.quantsim import QuantizationSimModel
+from aimet_torch import quantizer
+```
+1. Load your pre-trained densenet121 model:
+```python
+model = torch.hub.load('pytorch/vision:v0.6.0', 'densenet121', pretrained=True)
+model.eval()
+```
+2. Evaluate AIMET features:
+
+Given the densenet121 architecture which is generally quite complex and deep, the most relevant AIMET features are likely to be Quantization-Aware Training (QAT), and Layer Sensitivity Analysis. 
+
+- Quantization-Aware Training (QAT): It helps to simulate the effect of quantization during training. This results in a more robust model, bearing the quantization error during the inference.
+
+- Layer Sensitivity Analysis: It helps to evaluate the robustness of different layers against quantization. Using this feature, we can understand the sensitivity of each layer and specifically tune the more sensitive ones to increase model efficiency.
+  
+3. Quantization:
+
+Choose between per-channel or per-tensor quantization. Densenet121 is a convolutional network, thus per-channel quantization can be more beneficial due to its added granularity. However, it comes at a computation cost. If computational resources are limited, then per-tensor quantization might be preferred.
+```python
+# Quantization Configuration
+quant_scheme = quantizer.QuantScheme.per_tensor
+# If computational capability is good, you could change to per_channel as
+# quant_scheme = quantizer.QuantScheme.per_channel
+```
+4. Apply Quantization:
+
+Create a QuantizationSimModel object for the model. Set the quant_scheme to your choice. Here the encoding bit-width is set to 8 as an example.
+```python
+# Quantization
+sim = QuantizationSimModel(model, quant_scheme, default_output_bw=8, default_param_bw=8)
+```
+5. Compression Strategies:
+
+Now comes the step to finalize the optimizations using compression strategies. This step requires us to evaluate between different strategies like Pruning or Transfer Learning (TL). 
+
+- Pruning: This is very useful for a complex, deep architecture like Densenet121. AIMET offers different pruning methods like 'NetAdapt' and 'VBMF' for channel pruning. Decide on the method based on your requirement and apply using `aimet_torch.prune` module.
+
+- TL: If you're using a pre-trained model, this is an effective strategy for fine-tuning the model with your data, thereby improving its performance.
+
+To use one of the Pruning methods:
+```python
+from aimet_torch.pruner import Pruner
+# You can choose other sparsity levels based on your needs
+pruner = Pruner(model, mode='NetAdapt', params=[{'sparsity_levels': [0.6]}])
+new_model = pruner.prune()
+```
+6. Evaluate the Model:
+
+To confirm the improvements, compare the pruned/optimized model's inference results in terms of accuracy and speed with the original model.
+```python
+eval_model(new_model,input_data)
+```
+Repeat the process of applying the optimization technique until you find your desired balance between accuracy and speed. The trade-off will depend on the specific requirements of your application. 
+
+Remember densenet121 is a deep model, so it's highly likely that you will see a drop in your inference time and slight decrements in your model accuracy. The Layer Sensitivity Analysis can help in identifying the layers causing the highest accuracy drops and they can be left unquantized or lesse pruned.
+
+This was a broad-brush approach to optimizing densenet121 using AIMET. The individual steps may require adjustments based on the specific application and dataset.

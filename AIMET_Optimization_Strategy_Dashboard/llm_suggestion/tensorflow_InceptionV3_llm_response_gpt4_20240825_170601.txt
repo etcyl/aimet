@@ -1,0 +1,32 @@
+### Model: InceptionV3 (TENSORFLOW)
+### Generated: 20240825_170557
+
+Step Before moving on to optimize the InceptionV3 model using AIMET, it's important to understand the model's architecture. InceptionV3 is a convolutional neural network that is 48 layers deep. It’s designed on the concept of "Network In Network" and "Going Deeper with Convolutions" that focuses on how an architectural layout can increase the quality of the model in terms of speed and accuracy.
+
+Let's consider the following AIMET features:
+
+1. **Quantization-Aware Training (QAT)**: AIMET offers the benefits of Post Training Quantization (PTQ) but also simulates the effects of quantization during training itself. Hence, the model learns to make up for the quantization losses, especially for models with features like batch-normalization where PTQ does not work well. It's highly recommended for the InceptionV3 model.
+
+2. **Cross-Layer Equalization**: One good feature in AIMET is cross-layer equalization suitable for deep architectures like InceptionV3. It can reduce redundancy across layers and improves quantization for better accuracy.
+
+3. **Layer Sensitivity Analysis**: This feature helps evaluate the importance of each layer in the network, which is relevant when considering model pruning or when you need to focus more on optimizing certain layers of the model.
+
+For Quantization strategy, Identify whether per-channel or per-tensor quantization is best for your case. Tensorflow's quantization api supports per-tensor quantization by default though per-channel quantization is recommended for convolutional layers. You'll need to identify the kind of layers in the model and perform quantisation accordingly.
+
+Here's a step by step guide:
+
+1. **Model Preparation**: Load the pre-trained InceptionV3 model.
+
+2. **Layer Sensitivity Analysis**: Use AIMET's API `aimet_tensorflow.LayerSensitivityAnalysis.evaluate_model()` on the trained model to determine the effect of quantizing each layer. This can guide the pruning strategy or the fine-tuning focus.
+
+3. **Pruning**: Based on Layer Sensitivity Analysis, prune insignificant neurons using `aimet_tensorflow.Compression.training()`. Aim to reduce the model size and complexity without sacrificing much on accuracy. 
+
+4. **Fine-tuning after Pruning**: Post-pruning the model needs to be fine-tuned or retrained to recover the lost accuracy. Use `aimet_tensorflow.Quantization.quantsim()`. Fine-tune the model using your regular process with reduced learning rate.
+
+5. **Quantization - Aware Training**: Apply the Quantization-Aware Training (QAT) using AIMET's `Quantsim` API. It will simulate the effects of quantization during the training process. The output model will then be suitable for TF-Lite or similar platforms that support quantized inference.
+
+6. **Cross-Layer Equalization**:  Before Quantization, apply AIMET’s cross-layer equalization technique to minimize the redundancy across layers and to minimize the loss in accuracy due to quantization.
+
+7. **Evaluate Performance**: Check the accuracy, model size, and inference time of the model now. The shift should reflect the theoretical trade-offs.
+
+Remember, the InceptionV3 model has 48 layers, so the quantization and pruning strategy should leverage this layered architecture. Quantization might affect the layers' output, prepending a QuantStub and appending a DequantStub to manually control where quantization operations are inserted for each layer. In the case of transfer learning, the optimizer should be chosen wisely to retain the pre-trained features' effectiveness.

@@ -1,0 +1,34 @@
+### Model: resnet18 (PYTORCH)
+### Generated: 20240825_170235
+
+Step AIMET (AI Model Efficiency Toolkit) offers advanced techniques for model compression and quantization. Here's how you can apply its relevant features for optimizing a Resnet18 model running on Pytorch:
+
+1. **Identify AIMET Features Relevant for Your Model**: Considering ResNet18 model on Pytorch, the most relevant AIMET features would be:
+   - **Quantization-Aware Training (QAT)**: This technique models the effects of quantization during the training process. It helps in maintaining the accuracy of the model when the weights are quantized reducing the model size.
+   - **Quantization Encoding**: AIMET uses this for weight and activation tensors to determine bit-width, reduce storage requirements and computational needs.
+   - **Cross-Layer Equalization**: A technique to harmonize the scales across model layers, can be beneficial during quantization. However, for ResNet architectures, the impact might be less significant due to its residual pathways. 
+
+2. **Choosing between Per-Channel or Per-Tensor Quantization**: This choice depends on the model complexity and the layers employed in the neural network.
+   - **Per-Tensor Quantization** uses a single scale and zero point for the entire tensor. It is usually less computationally exhaustive but may compromise precision.
+   - **Per-Channel Quantization** applies different scales and zero points to each channel in a tensor. Usually, for ResNet18's convolutional layers, per-channel quantization will help maintaining high precision as different layers and channels may have different distributions.
+
+3. **Step-by-
+Step Instructions**:
+
+   - **
+Step 1: Model Preparation**: Import your ResNet18 model fully trained and ready for optimization.
+   - **
+Step 2: Apply Quantization-Aware Training (QAT)**: For a model like ResNet18 with many convolutional layers, applying QAT can be useful. It introduces fake quantization layers for each weight tensor and activation tensor. You need to call `QATQuantizer` method, pass the model for conversion and retrain it.
+   - **
+Step 3: Set Quantization Encoding**: For AIMET's Quantization simulator, choose either Static or Dynamic quantization mode, which allows controlling the granularity; per-tensor or per-channel. Set encodings accordingly using `set_tensor_quantizer()`.
+   - **
+Step 4: Compression Techniques**: AIMET facilitates features like Unified Quantization and Compression Scheduler which can be considered. Unified Quantization simulates different quantization methods in tandem like linear, min-max etc. Compression Scheduler schedules the application of various compression techniques over a model's lifetime.
+   - **
+Step 5: Evaluate the Performance**: Finally, evaluate the optimized and compressed model's performance with a validation test set using your model’s speed and accuracy metrics.
+
+4.  **Considerations for ResNet18**:
+    - ResNet architectures, given their shortcuts or skip connections, may not retrieve greater benefits from Cross-Layer Equalization as other sequential models.
+    - Due to the presence of batch normalization layers in the model architecture, you might need to fuse these with previous convolutions for better results in quantization.
+    - Given the complexity of the model, per-channel quantization is recommended for high precision. However, consider the trade-off against computational complexity and resource constraints.
+
+Remember, optimizing machine learning models is a rigorous and iterative process. Various AIMET’s settings will result in different outcomes based on the specificities of a model or your compute resources. Always thoroughly test your models post-optimization to ensure acceptable performance according to your criteria.
