@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="example_images/example3_Screenshot 2024-08-26 013110.png" alt="Visualization and explainability dashboard." width="400" />
+</p>
+
 # Model Interpretability and Explainability Dashboard
 
 This project demonstrates a Flask-based web application that allows users to visualize model activation maps before and after optimizations like pruning and quantization. The tool supports both PyTorch and JAX, enabling users to see the impact of these optimizations on a computer vision model. Additionally, the dashboard allows users to select from different PyTorch models and choose which LLM model to use for generating explainability reports. The tool also provides metrics for evaluating the similarity between pre- and post-optimization visualizations.
